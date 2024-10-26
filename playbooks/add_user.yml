@@ -1,0 +1,11 @@
+---
+
+- name: Creating Users
+  hosts: all
+
+  tasks:
+  - name: Create user
+    user:
+     name: john
+     home: /home/john
+     shell: /bin/bash

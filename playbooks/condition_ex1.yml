@@ -1,0 +1,16 @@
+---
+- name: Install apache based on OS type
+  hosts: all
+
+  tasks:
+    - name: install apache on ubuntu
+      apt:
+        name: apache2
+        state: present
+      when: ansible_os_family == "ubuntu"
+
+    - name: Install apache on "RedHat"
+      yum: 
+        name: httpd
+        state: present
+      when: ansible_os_family == "RedHat"

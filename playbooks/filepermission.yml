@@ -1,0 +1,9 @@
+---
+- name: File permission change in clients
+  hosts: all
+
+  tasks:
+  - name: "File permission change"
+    file:
+      path: /tmp/test1.txt
+      mode: a+w

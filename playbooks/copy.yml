@@ -1,0 +1,13 @@
+---
+- name: Copy files to clients
+  hosts: all
+
+  tasks:
+  - name: "Copying files"
+    become: true
+    copy:
+      src:  /tmp/test1.txt
+      dest: /tmp
+      owner: admintt
+      group: admintt
+      mode: 0644

@@ -1,0 +1,1142 @@
+
+=== tutorials
+https://www.youtube.com/watch?v=GROqwFFLl3s&t=1911s
+
+=== Module help
+  https://docs.ansible.com/ansible/2.8/modules/modules_by_category.html
+  https://docs.ansible.com/ansible/2.8/modules/list_of_files_modules.html
+  https://docs.ansible.com/ansible/2.8/modules/copy_module.html#copy-module
+
+=== command tools
+  https://docs.ansible.com/ansible/latest/command_guide/index.html
+
+=== Ansible over docker
+  How to Install & Configure Ansible on Docker Containers | Docker DevOps Project HandsOn 
+    https://youtu.be/F9kApg3-bZQ
+  Setting Up an Ansible Control Node and a Managed Node using Docker Compose
+    https://medium.com/@mefengl/unknown-title-a4d9400b7bf0
+
+
+
+
+= install
+  https://www.atlantic.net/vps-hosting/how-to-install-ansible-on-oracle-linux-8/
+  https://www.youtube.com/watch?v=qod9G6TYiJI
+  https://www.digitalocean.com/community/tutorials/how-to-set-up-ansible-inventories
+
+
+
+= install in ubuntu 22 LTS
+  ansible --version
+  784  sudo apt-get install ansible
+  785  ansible --version
+  790  sudo apt update
+  791  sudo apt install software-properties-common
+  792  add-apt-repository --yes --update ppa:ansible/ansible
+  793  sudo add-apt-repository --yes --update ppa:ansible/ansible
+      sudo -i
+      apt remove ansible
+      apt install ansible
+      ansible --version
+
+= install in oracle linux
+  yum repolist
+  yum install epel-release
+  yum install ansible
+  yum list ansible
+  yum list ansible --showduplicates
+
+hostnamectl
+uname -a
+
+dnf info ansible
+yum info ansible
+yum list available | grep ansible
+
+ansible --version
+ansible-playbook --version
+cat inventry
+
+ansible -m ping localhost
+ansible -m setup localhost
+
+ansible -a "/bin/echo hi" loclhost
+ansible -a "/bin/uname -a" localhost
+
+
+
+mkdir ansible
+cd ansible
+vi inventory 
+  localhost ansible_connection=local
+cat inventory
+  localhost ansible_connection=local
+
+
+nano /etc/ansible/hosts
+  [web]
+server1 ansible_ssh_host=<manager-node-ip> ansible_ssh_port=22 ansible_ssh_user=root
+
+[database]
+dbserver1 ansible_ssh_host=<worker-node-ip> ansible_ssh_port=22 ansible_ssh_user=root
+
+nano /etc/ansible/ansible.cfg  ::: turn off the deprecation warnings and host key checking:
+  Add the following line below [defaults]:
+    deprecation_warnings=False
+    host_key_checking = False
+
+
+
+ansible-inventory -i inventory --list
+ansible-inventory -i inventory --list
+ansible all -i inventory -m ping
+
+
+
+ansible-playbook -i inventry example.yml
+
+---
+-  name: example playbook
+   hosts: all
+   vars:
+     myvar: "example text"
+     mybool: true
+     mycities:
+      - New York
+      - Paris
+
+   tasks:
+      - name: print var
+        ansible.builtin.debug:
+          msg: "value {{myvar}}"
+        notify: reload
+
+      - name: condition
+        ansible.builtin.debug:
+          msg: "example condition"
+        when: mybool
+
+      - name: print cities
+        ansible.builtin.debug:
+          var: item
+        loop: "{{ mycities }}"
+
+   handlers:
+      - name: reload
+        ansible.builtin.debug:
+          msg: "example handler"
+
+====
+
+---
+- name: my ping 
+  hosts: localhost
+  become: false
+
+  task:
+      - name: my test
+        ping:
+
+====
+
+---
+- name: my debug
+  hosts: localhost
+  tasks: 
+    - name: my debug msg
+      ansible.builtin.debug:
+
+
+---
+- name: my command module
+  hosts: localhost
+  tasks: 
+    - name: checking the uptime
+      ansible.builtin.command: uptime
+      register: my_out
+
+    - name: my command output
+      ansible.builtin.debug: 
+          var: my_out.stdout_lines
+
+---
+- name: my shell module
+  hosts: localhost
+  tasks: 
+    - name: list files
+      ansible.builtin.shell: 'ls -lrth *'
+      register: my_out
+
+    - name: my shell output
+      ansible.builtin.debug: 
+          var: my_out.stdout_lines
+
+---
+- name: my line in file
+  hosts: localhost
+  tasks: 
+    - name: edit line of a file
+      ansible.builtin.lineinfile:
+        state: present
+        dest: /home/admintt/ansible/texts.txt
+        regexp: "^dog"
+        line: "dog food"
+
+---
+- name: my blockinfile module
+  hosts: localhost
+  tasks:
+    - name: generate /etc/hosts file
+      ansible.builtin.blockinfile:
+        state: present
+        dest: /etc/hosts
+        content: |
+          192.168.0.200 demo demo.exampleTT.com
+
+
+---
+- name: my pause 
+  hosts: localhost
+  vars: 
+    wait_seconds: 100
+
+  tasks:
+    - name: my pause1
+      ansible.builtin.pause:
+        seconds: "{{ wait_seconds | int }}"
+  
+    - name: message
+      ansible.builtin.debug:
+        msg: "The End"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======================================================================================================
+
+~~~~~~~~ Ansible course 2  ~~~~Imran Afzal~~~~ Ansible Udemy - Linux Red Hat Certified Engineer (RHCE - EX294)
+
+========================================================================================================
+
+
+--- install
+https://www.linuxhelp.com/how-to-install-and-configure-ansible-on-oracle-linux-9-3#!#google_vignette
+
+yum install epel-release
+yum install ansible ansible-doc
+ 
+
+--- Ansible config files
+  all are in /etc/ansible
+    /etc/ansible
+    /etc/ansible/ansible.cfg
+    /etc/ansible/hosts
+    /etc/ansible/roles
+
+
+
+--- Hosts
+  /etc/ansible/hosts
+  ansible-playbook -i /home/myplace    ::: need to use "-i" if require own path to keep hosts file
+  ansible-inventory --list    ::: listing host files
+  ansible-playbook sample-playbook.yml --limit i-c98d5a71 --list-hosts
+  ansible-playbook user.yml -i hosts/hosts --limit imac-2.local --check
+  ansible-inventory --list
+
+
+    [appservers]
+    app1.example.com
+    app2.example.com
+    200.192.210.23
+    210.192.210.[26:30]   ::: ip range
+    app[70:75].example.com     ::: range
+    server1 ansible_ssh_host=10.91.50.110    ::: alias 
+
+    [webservers]
+    web1.example.com
+    245.192.210.23
+
+    [dbservers]
+    db1.example.com
+    236.192.210.23
+
+
+    ansible-inventory --list
+
+
+--- ssh keys generate on the contol node and cop to clients (for passwordles)
+    # enter below commands in control node 
+    ssh-keygen    ::: keep press enter and leave evrything default 
+    ssh-copy-id 200.192.210.23     ::: copy to clients ... this ask root of the clients
+    ssh-copy-id 100.192.110.40    ::: copy to clients
+
+          [root@linuxclient1 ~]# cat /etc/ssh/sshd_config | grep Pub
+          PubkeyAuthentication yes
+          PermitRootLogin yes
+          PermitRootLogin prohibit-password
+          PasswordAuthentication yes
+
+          ---------------
+          service sshd status
+          service sshd restart
+          ---------------------
+          
+          --- enable_root_login_over_ssh
+          https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/v2v_guide/preparation_before_the_p2v_migration-enable_root_login_over_ssh#Preparation_Before_the_P2V_Migration-Enable_Root_Login_over_SSH
+
+          cat /etc/ssh/sshd_config | grep Permit
+            PermitRootLogin yes
+            ::: ssh root@192.168.12.133 , if above set no; this is not allowed 
+            ::: ssh john@192.168.12.133 , if above set no; allow for local user 
+
+
+
+
+    # to test 
+    ssh <clients ip>
+    -or-
+    ansible -m ping all 
+    ansible -a "uptime" all 
+
+
+--- Module help
+  https://docs.ansible.com/ansible/2.8/modules/modules_by_category.html
+  https://docs.ansible.com/ansible/2.8/modules/list_of_files_modules.html
+  https://docs.ansible.com/ansible/2.8/modules/copy_module.html#copy-module
+
+--- Running ansible without a playbook ( ad-hoc commands)
+  ansible <command> 
+  ansible -m ping localhost
+  ansible -m setup localhost
+
+
+  ansible -a "/bin/echo hi" loclhost
+  ansible -a "/bin/uname -a" localhost
+
+  ansible -m shell -a "chage -l john | grep expire"  all
+
+-----------------------------------------------------------------------------------------------------------------
+-----------ad-hoc commands ---------Running ansible without a playbook ------------------------------------------
+-----------------------------------------------------------------------------------------------------------------
+
+ansible [target] -m [module] -a "[module options]"
+
+#ping
+ansible localhost -m ping
+
+# shell 
+ansible all -m shell -a "ls -ltr"
+ansible all -m shell -a "systemctl status httpd"
+ansible all -m shell -a "cat /etc/os-release | egrep -i 'product|version' "
+
+
+# run command without the shell
+ansible all -a "/sbin/reboot"
+
+
+# create file 
+ansible all -m file -a "path=/tmp/sample1.txt state=touch mode=700" 
+
+# delete file 
+ansible all -m file -a "path=/tmp/sample1.txt state=absent" 
+
+# copy file 
+ansible all -m copy -a "src=/tmp/sample1.txt dest=/tmp "
+
+# Installing Package
+ansible all -m yum -a "name=telnet state=present"
+ansible all -m yum -a "name=httpd-manual state=present"
+
+ansible all -m shell -a "rpm -qa | grep telnet"
+ansible all -m shell -a "rpm -qa | grep httpd"
+ansible all -m shell -a "systemctl status httpd"
+
+
+# start/enable service
+ansible all -m service -a "name=httpd state=started enabled=yes"
+ 
+# remove package
+ansible all -m yum -a "name=telnet state=absent"
+ansible all -m yum -a "name=httpd-manual state=absent"
+-or-
+ansible all -m shell -a "yum remove httpd"
+
+
+# creating a user
+ansible all -m user -a "name=saman home=/home/saman shell=/bin/bash state=present"
+ansible all -m shell -a "id saman"
+
+# add to different group
+ansible all -m user -a "name=saman group=john"
+ansible all -m shell -a "id saman"
+
+# delete user
+ansible all -m user -a "name=saman home=/home/saman shell=/bin/bash state=absent"
+-or-
+ansible all -m shell -a "userdel saman"
+
+ansible all -m shell -a "id saman"
+
+# getting system information
+ansible all -m setup
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+===== Ansible playbook =========================================================================================================
+--------------------------------------------------------------------------------------------------------------------------------
+
+--- Running ansible playbook
+  ansible-playbook <command> 
+
+  ansible-playbook --syntax-check first.yml           ::: check syntax
+  ansible-playbook --check first.yml                  ::: dry run
+  ansible-playbook first.yml                          ::: Run 
+  ansible-playbook /etc/ansible/playbook/first.yml    ::: Run 
+
+  ansible-playbook first.yml    --start-at-task 'Task name'                      ::: start run playbook from specific task
+
+
+
+
+
+== ping
+vim first.yml
+
+---
+- name: My first playbook
+  hosts: localhost
+
+  tasks:
+  - name: "test connectivity"
+    ping:
+
+
+
+== output
+vim helloworld.yml
+
+---
+- name: My second playbook
+  hosts: localhost
+
+  tasks:
+    - name: Print Hello World
+      debug: msg="Hello World"
+
+
+
+== multiple tasks
+vim  mtask.yml
+
+---
+- name: Running 2 tasks
+ hosts: localhost
+
+ tasks:
+  - name: Test connectivity
+    ping:
+
+  - name: Print Hello World
+    debug: msg="Hello World"
+
+
+== installing and starting package
+vim packinstall.yml
+
+---
+- name: Installing and Running apache
+  hosts: localhost
+
+  tasks:
+    - name: Install apache
+      yum:
+        name: httpd
+        state: present
+
+    - name: start httpd
+      service:
+        name: httpd
+        state: started
+  
+~~~~~~~~~
+rpm -qa | grep httpd
+systemctl status httpd
+
+ansible-playbook --syntax-check packinstall.yml
+ansible-playbook --check packinstall.yml
+ansible-playbook packinstall.yml
+
+rpm -qa | grep httpd
+systemctl status httpd
+
+
+
+
+== stopping servce and uninstalling package
+https://docs.ansible.com/ansible/2.8/modules/yum_module.html#yum-module
+https://docs.ansible.com/ansible/2.8/modules/service_module.html#service-module
+https://docs.ansible.com/ansible/2.8/modules/systemd_module.html#systemd-module
+
+
+vim un-packinstall.yml
+
+---
+- name: stopping servce and uninstalling package
+  hosts: localhost
+
+  tasks:
+    - name: stop httpd
+      service:
+        name: httpd
+        state: stopped
+
+    - name: unInstall apache
+      yum:
+        name: httpd
+        state: absent
+        autoremove: yes
+
+
+~~~~~~~~~
+rpm -qa | grep httpd
+systemctl status httpd
+
+ansible-playbook un-packinstall.yml  --syntax-check 
+ansible-playbook un-packinstall.yml  --check 
+ansible-playbook un-packinstall.yml
+
+rpm -qa | grep httpd
+systemctl status httpd
+
+
+
+== clients ping check 
+vim clientstatus.yml
+
+---
+- name: Test connectivity
+  hosts: all
+
+  tasks:
+  - name: "Test connectivity"
+    ping:
+
+
+== copy files to clients
+vim copy.yml
+
+---
+- name: Copy files to clients
+  hosts: all
+
+  tasks:
+  - name: "Copying files"
+    become: true
+    copy:
+      src:  /tmp/test1.txt
+      dest: /tmp
+      owner: admintt
+      group: admintt
+      mode: 0644
+
+== file permission change in clients
+vim filepermission.yml
+
+---
+- name: File permission change in clients
+  hosts: all
+
+  tasks:
+  - name: "File permission change"
+    file:
+      path: /tmp/test1.txt
+      mode: a+w
+
+
+== file status and attribute check in clients
+vim filecheck.yml
+
+---
+- name: File status and attribute check in clients
+  hosts: all
+
+  tasks:
+  - name: "Status and attribute check"
+    stat:
+      path: /tmp/test1.txt
+    register: fs 
+  
+  - name: Show result
+    debug: 
+      msg: File attributes {{ fs }}  
+
+
+== Create directory and file then Remove file
+vim dir_file_cre.yml
+
+---
+- name: Create directory and file then Remove file
+  hosts: all
+
+  tasks:
+  - name: Create a directory
+    file:
+      path: /tmp/testdir
+      owner: admintt
+      group: admintt
+      mode: 770
+      state: directory 
+
+  - name: Create a file in the directory
+    file: 
+      path: /tmp/testdir/test1.txt 
+      state: touch
+
+  - name: Stat the new file
+    stat: 
+      path: /tmp/testdir/test1.txt
+    register: jf
+
+  - name: Show file status
+    debug: 
+      msg: File status and attribute {{ jf }}
+
+  - name: Remove file
+    file: 
+      path: /tmp/testdir/test1.txt
+      state: absent
+
+
+
+== Create file and add text
+vim file_cre_add_text.yml
+
+---
+- name: Create file and add text
+  hosts: localhost
+
+  tasks:
+  - name: Create a new file
+    file:
+      path: /tmp/test2.txt
+      state: touch 
+
+  - name: Add text to the file 
+    blockinfile: 
+      path: /tmp/test2.txt 
+      block: Hi friends, how are you 
+
+
+== Setup apache and open firewall port
+
+The playbook will
+  1. Install httpd package
+  2. Start httpd service
+  3. Open http service port in firewall
+  4. Restart firewalld service
+
+  make sure below ... Before create above 
+    # Login to LinuxCleint1
+          rpm –qa | grep http
+          systemctl status firewalld
+
+    # Login to ControlNode
+          # Install additional Ansible collection for firewalld
+               ansible-galaxy collection install ansible.posix
+ 
+
+vim http_setup_with_firewall.yml
+
+---
+- name: Setup httpd and open firewall port
+  hosts: all
+
+  tasks:
+    - name: Install apache package
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start httpd
+      service:
+        name: httpd
+        state: started
+
+    - name: Open port 80 for http access
+      firewalld:
+        service: http
+        permanent: true
+        state: enabled
+
+    - name: Restart firewalld service to load firewall changes
+      service:
+        name: firewalld
+        state: reloaded
+
+# to check/test above installed/configured
+     # in the linux client
+        rpm –qa | grep http
+        systemctl status httpd
+        systemctl status firewalld
+        firewall-cmd --list-all    ::: check if http srvice is enabled in firewall
+        firewall-cmd --permanent --remove-service=http     ::: if want to remove
+           firewall-cmd --permanent --reload 
+        
+
+
+== Run shell script in clients
+#first create /tmp/test_shell.sh file in client 
+  vim /tmp/test_shell.sh
+    #!/bin/bash
+    touch /tmp/file_from_shell.txt
+    echo "$(date)" >> /tmp/file_from_shell.txt
+
+  # save above and provide below previledge 
+    chmod +x test_shell.sh
+
+
+# in the ControlNode vm    
+  vim shell_script.yml
+
+---
+- name: Run shell script  
+  hosts: all
+
+  tasks:
+  - name: Run shell script in clients
+    shell: "/tmp/test_shell.sh"
+
+
+== Cron Job
+vim schedule_cron.yml
+
+---
+- name: Create a cron job 
+  hosts: all
+
+  tasks:
+  - name: Schedule a cron
+    cron: 
+      name: This job is scheduled by Ansible
+      minute: "0"
+      hour: "10"
+      day: "*"
+      month: "*"
+      weekday: "4"
+      user: root
+      job: "/tmp/test_shell.sh"
+
+# check in client whether job created 
+crontab -l 
+
+
+== Download from URL
+# create a directory and download into that
+vim download_url.yml
+
+---
+- name: Download Tomcat to a directory
+  hosts: all
+
+  tasks:
+    - name: Create a directory
+      file:
+        path: /opt/myapps_download
+        state: directory
+        mode: 0755
+        owner: root
+        group: root
+
+    - name: Download Tomcat
+      get_url:
+        url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.96/bin/apache-tomcat-9.0.96.tar.gz"
+        dest: /opt/myapps_download
+        mode: 0755
+        group: admintt
+        owner: admintt
+
+
+== User account creation
+
+vim add_user.yml
+
+---
+
+- name: Creating Users
+  hosts: all
+
+  tasks:
+  - name: Create user
+    user:
+     name: john
+     home: /home/john
+     shell: /bin/bash
+
+
+== Add or update user password
+
+vim change_pass.yml
+
+---
+
+- name: Add or change user password
+  hosts: all
+
+  tasks:
+    - name: Change Password
+      user:
+        name: john
+        update_password: always
+        password: "{{ newpassword|password_hash('sha512') }}"
+
+# Run playbook with extra-vars
+ansible-playbook change_pass.yml --extra-vars newpassword=abc123
+
+
+== Kill running procees
+- Find a running process
+- Ignore any errors
+- Hold the result in registry variable
+- Use shell module | and kill command ... 
+
+vi kill_process.yml 
+
+---
+
+- name: Find a process and kill it
+  hosts: all
+
+  tasks:
+    - name: get the running process
+      ignore_errors: yes
+      shell: "ps -efw | grep top | awk '{print $2}'"
+      register: running_process
+
+    - name: Kill running process process
+      ignore_errors: yes
+      shell: " kill {{ item }}"
+      with_items: "{{ running_process.stdout_lines }}"
+
+
+== Handlers
+
+vim handlers_example1.yml
+
+---
+- name: Enable service on firewalld
+  hosts: all
+
+  tasks:
+  - name: Open port for http
+    firewalld:
+      service: http
+      permanent: true
+      state: enabled
+    notify:
+    - Reload firewalld
+
+  - name: Ensure firewalld is running
+    service:
+      name: firewalld
+      state: started
+
+
+  handlers:
+    - name: Reload firewalld
+      service:
+        name: firewalld
+        state: reloaded
+  
+# firewall-cmd --list-all    ::: check if http srvice is enabled in firewall
+# firewall-cmd --permanent --remove-service=http     ::: if want to remove
+    # firewall-cmd --permanent --reload 
+
+~~~~~~~~~~~~~~~~~~~~~~~
+
+vim handlers_example2.yml
+---
+- name: Verify apache installation
+  hosts: localhost
+  tasks:
+  - name: Ensure apache is at the latest version
+    yum:
+     name: httpd
+     state: latest
+
+  - name: Copy updated apache config file
+    copy:
+     src: /tmp/httpd.conf
+     dest: /etc/httpd.conf
+    notify:
+    - Restart apache
+ 
+  - name: Ensure apache is running
+    service:
+     name: httpd
+     state: started
+
+  handlers:
+    - name: Restart apache
+      service:
+       name: httpd
+       state: restarted
+
+
+== Conditions (when)
+
+vim condition_ex1.yml
+
+---
+- name: Install apache based on OS type
+  hosts: all
+
+  tasks:
+    - name: install apache on ubuntu
+      apt:
+        name: apache2
+        state: present
+      when: ansible_os_family == "ubuntu"
+
+    - name: Install apache on "RedHat"
+      yum: 
+        name: httpd
+        state: present
+      when: ansible_os_family == "RedHat"
+
+  ::: above ansible_os_family  is built in variable and took from below
+  ansible localhost -m setup
+  ansible all -m setup | grep -i family
+
+
+== loops
+# normal linux command | for loops
+  for c in saman nimal kamal; do useradd $c; done
+  for c in ftp telnet htop; do yum install $c -y; done 
+
+
+vim loop_useradd_without_loop.yml
+
+---
+- name: Create Users without loop
+  hosts: all
+
+  tasks: 
+    - name: Create user myapp1
+      user: 
+          name: myapp1 
+
+    - name: Create user myapp2
+      user: 
+          name: myapp2 
+
+    - name: Create user myapp3
+      user: 
+          name: myapp3 
+
+~~~~~~~~
+
+vim loop_useradd_with_loop1.yml
+
+---
+- name: Create Users with loop
+  hosts: all
+
+  tasks:
+    - name: Create Users 
+      user:
+        name: "{{ item }}"
+      loop:
+        - myapp1
+        - myapp2
+        - myapp3
+
+
+~~~~~~~~
+
+vim loop_useradd_with_loop2.yml
+
+---
+- name: Create Users with loop2
+  hosts: all
+  vars:
+    users: [myapp1,myapp2,myapp3]
+
+  tasks:
+    - name: Create users 
+      user: 
+        name: "{{ item }}"
+      with_items: "{{ users }}"
+
+
+~~~~~~~~~~
+
+# only for yum can provide as below
+# no need "with_items"
+
+vim loop_install_with_loop3.yml
+
+---
+- name: Install multiple packages
+  hosts: all
+  vars:
+    packages: [ftp,telnet,htop]
+
+  tasks:
+    - name: Install Packages
+      yum:
+        name: "{{ packages }}"   # only for yum can provide as below
+        state: present
+ 
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+===== Ansible Roles =========================================================================================================
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+/etc/ansible/roles
+
+# make directory for each roles
+mkdir basic_install
+mkdir full_install
+-or-
+mkdir dbservers
+mkdir appservers
+
+# create sub-diretory tasks within each directory
+mkdir basic_install/tasks
+mkdir full_install/tasks
+
+# Create yml files within these sub-diretories
+touch basic_install/tasks/main.yml
+touch full_install/tasks/main.yml
+
+# example1 ~~~~~~~~~~~~~~
+# before start the example,  check below in clients 
+rpm -qa | grep httpd
+yum remove httpd
+firewall-cmd --list-all    ::: check if http srvice is enabled in firewall
+firewall-cmd --permanent --remove-service=http     ::: if want to remove
+   firewall-cmd  --reload
+
+# create below inside /etc/ansible/roles/
+  # /etc/ansible/roles/full_install/tasks
+
+vim /etc/ansible/roles/full_install/tasks/main.yml
+
+
+---
+- name: Install httpd package
+  yum: 
+    name: httpd
+    state: present
+
+- name: start httpd
+  service:
+    name: httpd
+    state: started
+
+- name: Opn port for http
+  firewalld:
+    service: httpd
+    permanent: true
+    state: enabled 
+
+
+- name: Restart firewalld
+  service:
+    name: firewalld
+    state: reloaded
+
+~~~~~~~~~~~~~~~~~~~~~~
+
+# create below inside /etc/ansible/roles/
+
+vim basic_install/tasks/main.yml
+
+---
+- name: Install httpd package
+  yum: 
+   name: httpd
+   state: present
+
+- name: Start httpd
+  service:
+    name: httpd
+    state: started
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# create below inside /etc/ansible/playbooks
+
+vim byrole.yml
+
+---
+- name: Full install
+  hosts: all
+  roles: 
+    - full_install
+
+- name: Basic install
+  hosts: localhost
+  roles:
+    - basic_install
+
+~~~~~~~~~~
+# before run above,  check below
+rpm -qa | grep httpd
+  ansible -m shell -a "rpm -qa | grep httpd" all,localhost
+
+yum remove httpd ::: if want to remove
+  ansible -m shell -a "yum remove httpd -y" all,localhost
+
+firewall-cmd --list-all    ::: check if http srvice is enabled in firewall
+  ansible -m shell -a "firewall-cmd --list-all" all,localhost
+
+firewall-cmd --permanent --remove-service=http     ::: if want to remove
+  ansible -m shell -a "firewall-cmd --permanent --remove-service=http" all,localhost
+
+   firewall-cmd  --reload
+    ansible -m shell -a "firewall-cmd  --reload" all,localhost
+
+
+
+# run above playbook with roles  
+ansible playbook byrole.yml
+
+
+

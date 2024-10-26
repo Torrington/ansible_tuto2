@@ -1,0 +1,20 @@
+---
+- name: Download Tomcat to a directory
+  hosts: all
+
+  tasks:
+    - name: Create a directory
+      file:
+        path: /opt/myapps_download
+        state: directory
+        mode: 0755
+        owner: root
+        group: root
+
+    - name: Download Tomcat
+      get_url:
+        url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.96/bin/apache-tomcat-9.0.96.tar.gz"
+        dest: /opt/myapps_download
+        mode: 0755
+        group: admintt
+        owner: admintt

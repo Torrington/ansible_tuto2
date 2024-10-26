@@ -1,0 +1,13 @@
+---
+- name: File status and attribute check in clients
+  hosts: all
+
+  tasks:
+  - name: "Status and attribute check"
+    stat:
+      path: /tmp/test1.txt
+    register: fs 
+  
+  - name: Show result
+    debug: 
+      msg: File attributes {{ fs }} 

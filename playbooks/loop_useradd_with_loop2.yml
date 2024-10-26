@@ -1,0 +1,11 @@
+---
+- name: Create Users with loop2
+  hosts: all
+  vars:
+    users: [myapp1,myapp2,myapp3]
+
+  tasks:
+    - name: Create users 
+      user: 
+        name: "{{ item }}"
+      with_items: "{{ users }}"

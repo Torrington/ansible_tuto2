@@ -1,0 +1,11 @@
+---
+
+- name: Add or change user password
+  hosts: all
+
+  tasks:
+    - name: Change Password
+      user:
+        name: john
+        update_password: always
+        password: "{{ newpassword|password_hash('sha512') }}"

@@ -1,0 +1,15 @@
+
+# only for yum can provide as below
+# no need "with_items"
+---
+- name: Install multiple packages
+  hosts: all
+  vars:
+    packages: [ftp,telnet,htop]
+
+  tasks:
+    - name: Install Packages
+      yum:
+        name: "{{packages}}"
+        state: present
+ #     with_items: "{{packages}}"

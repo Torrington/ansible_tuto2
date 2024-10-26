@@ -1,0 +1,17 @@
+---
+- name: Create Users without loop
+  hosts: all
+
+  tasks: 
+    - name: Create user myapp1
+      user: 
+          name: myapp1 
+
+    - name: Create user myapp2
+      user: 
+          name: myapp2 
+
+    - name: Create user myapp3
+      user: 
+          name: myapp3 
+

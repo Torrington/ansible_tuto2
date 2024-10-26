@@ -1,0 +1,15 @@
+- name: stopping servce and uninstalling package
+  hosts: localhost
+
+  tasks:
+    - name: stop httpd
+      service:
+        name: httpd
+        state: stopped
+
+    - name: unInstall apache
+      yum:
+        name: httpd
+        state: absent
+        autoremove: yes
+
