@@ -1,0 +1,15 @@
+--- 
+- name: Setup apache server
+  hosts: all
+  tasks:
+    - name: Install httpd
+      yum:
+        name: httpd
+      tags: inst_httpd
+
+    - name: Start httpd
+      service:
+        name: httpd
+        state: started
+      tags: start_httpd
+

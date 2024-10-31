@@ -1,0 +1,10 @@
+---
+- name: Print long message
+  hosts: localhost
+  vars:
+    my_msg: "You need to be on time for the ceremony, late attendenace wiil be peanalized"
+
+  tasks:
+    - name: Message from a variable
+      debug:
+         msg: "{{ my_msg }}"

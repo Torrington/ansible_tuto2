@@ -1,0 +1,11 @@
+---
+- name: Create a file
+  hosts: all
+  vars: 
+    my_file_name: butterfly
+
+  tasks:
+    - name: Create a file 
+      file:
+         state: touch
+         path: /tmp/"{{ my_file_name }}".txt
